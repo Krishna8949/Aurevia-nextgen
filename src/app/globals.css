@@ -1,0 +1,200 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ease-quint-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --container-pad: clamp(1rem, 4vw, 2rem);
+  --color-red: #c30d23;
+  --color-offwhite: #e8e0d8;
+  --color-white: #f5f2ee;
+  --color-black: #050505;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  background: #050505;
+  color: #f5f2ee;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* ===== Editorial display scale — fills the viewport ===== */
+.display-1 {
+  font-family: var(--font-display), serif;
+  line-height: 0.82;
+  letter-spacing: -0.04em;
+  font-size: clamp(3rem, 11vw, 12.5rem);
+  font-weight: 500;
+}
+.display-2 {
+  font-family: var(--font-display), serif;
+  line-height: 0.86;
+  letter-spacing: -0.035em;
+  font-size: clamp(2.5rem, 8vw, 8.5rem);
+  font-weight: 500;
+}
+.display-3 {
+  font-family: var(--font-display), serif;
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  font-size: clamp(1.8rem, 5vw, 5.5rem);
+  font-weight: 500;
+}
+.eyebrow {
+  font-family: var(--font-text), sans-serif;
+  font-size: clamp(0.625rem, 0.85vw, 0.85rem);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.caption {
+  font-family: var(--font-display), serif;
+  font-size: clamp(1.25rem, 2.4vw, 2.5rem);
+  line-height: 1.25;
+  font-weight: 400;
+  font-style: italic;
+}
+
+/* ===== Persistent story stage — pinned for the document by the master
+   ScrollTrigger. It owns four layers; only their content transforms. ===== */
+.story-stage {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+/* Re-enable pointer events for interactive elements inside layers */
+.layer a, .layer button, .layer [role="link"], .layer [role="button"] {
+  pointer-events: auto;
+}
+.backdrop-layer { z-index: 0; }
+.visual-layer   { z-index: 1; }
+.text-layer     { z-index: 2; pointer-events: auto; }
+.image-layer    { z-index: 3; pointer-events: none; }
+
+/* Per-chapter visual/text wrappers start hidden — wireChapter fades them in */
+[data-ch-visual],
+[data-ch-text] {
+  visibility: hidden;
+  opacity: 0;
+}
+/* Chapter 1 starts visible */
+[data-ch-visual="1"],
+[data-ch-text="1"] {
+  visibility: visible;
+  opacity: 1;
+}
+/* Per-chapter backdrop panels start hidden too */
+[data-bg] {
+  visibility: hidden;
+  opacity: 0;
+}
+/* Chapter 1 backdrop starts visible */
+[data-bg="1"] {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* The master runway gives us the scroll to scrub. It is invisible — the stage
+   is what the user actually sees. */
+.runway {
+  position: relative;
+  width: 100%;
+  z-index: 0;
+}
+
+/* Universal panel that hosts headline + caption text for a chapter */
+.text-box {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: var(--container-pad);
+}
+
+/* Letter wrap — used by word-break / logo-build chapters. */
+.letter-row { display: inline-flex; align-items: baseline; flex-wrap: nowrap; }
+
+/* Documents grid for Information→Overload chapters. */
+.docs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  width: 100%;
+  height: 100%;
+  padding: 5vh 6vw;
+}
+@media (max-width: 768px) {
+  .docs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 4vh 4vw; }
+}
+.doc-cell {
+  background: #1a1210;
+  border: 1px solid rgba(195, 13, 35, 0.22);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-family: var(--font-text), sans-serif;
+}
+
+/* Network svg sizing. */
+.network-svg { width: 86vmin; height: 86vmin; }
+
+/* ===== Line-reveal text primitive ===== */
+.line-mask { display: block; overflow: hidden; }
+.line-inner { display: inline-block; transform: translateY(110%); }
+.line-in .line-inner { animation: lineRevealUp 1s var(--ease-quint-out) forwards; }
+@keyframes lineRevealUp { 0% { transform: translateY(110%); } 100% { transform: translateY(0); } }
+@keyframes lineRevealFade { 0% { transform: translateY(0.2rem); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+
+/* ===== Marquee track primitive ===== */
+.marquee { display: flex; width: max-content; will-change: transform; flex-wrap: nowrap; }
+.marquee-left  { animation: marqueeLeft 25s linear infinite; }
+.marquee-right { animation: marqueeRight 25s linear infinite; }
+@keyframes marqueeLeft  { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+@keyframes marqueeRight { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
+@media (prefers-reduced-motion: reduce) { .marquee-left, .marquee-right { animation-duration: 60s; } }
+
+/* ===== Custom cursor — off-white default, red on label ===== */
+.cursor {
+  position: fixed; top: 0; left: 0;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: #f5f2ee; pointer-events: none; z-index: 9999;
+  mix-blend-mode: difference;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s var(--ease-quint-out), height 0.3s var(--ease-quint-out), background 0.3s var(--ease-quint-out);
+  will-change: transform;
+}
+.cursor[data-variant="hover"] { width: 64px; height: 64px; background: transparent; border: 1px solid #f5f2ee; }
+.cursor[data-variant="label"] { width: 80px; height: 80px; background: #c30d23; }
+@media (hover: none), (pointer: coarse) { .cursor { display: none; } }
+::selection { background: #c30d23; color: #050505; }

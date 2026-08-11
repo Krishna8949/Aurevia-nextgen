@@ -81,6 +81,10 @@ html.lenis, html.lenis body { height: auto; }
   height: 100dvh;
   overflow: hidden;
   z-index: 1;
+  will-change: transform;
+  contain: layout style paint;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 .layer {
@@ -92,6 +96,9 @@ html.lenis, html.lenis body { height: auto; }
   align-items: center;
   justify-content: center;
   pointer-events: none;
+  will-change: transform, opacity;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 /* Re-enable pointer events for interactive elements inside layers */
 .layer a, .layer button, .layer [role="link"], .layer [role="button"] {

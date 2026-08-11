@@ -18,11 +18,16 @@ export function useLenisRef() {
 export function LenisProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const isCoarse = window.matchMedia("(pointer: coarse)").matches;
+    const isTouch = window.matchMedia("(pointer: coarse)").matches;
+
+    // Skip Lenis entirely on touch devices — native scroll is faster
+    if (isTouch || prefersReduced) {
+      return;
+    }
+
     const lenis = new Lenis({
       duration: 1.15,
-      smoothWheel: !prefersReduced && !isCoarse,
-      touchMultiplier: 1.5,
+      smoothWheel: true,
       wheelMultiplier: 1,
     });
     LenisCtx.current.lenis = lenis;

@@ -25,6 +25,7 @@ export default function Home() {
     builtRef.current = true;
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const isTouch = window.matchMedia("(pointer: coarse)").matches;
 
     // One master timeline, scrubbed across the entire runway
     const master = gsap.timeline({
@@ -33,7 +34,7 @@ export default function Home() {
         trigger: runway,
         start: "top top",
         end: "bottom bottom",
-        scrub: reduce ? false : 0.6,
+        scrub: reduce ? false : isTouch ? true : 0.6,
         pin: stage,
         pinSpacing: false,
         anticipatePin: 1,
